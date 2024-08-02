@@ -111,19 +111,42 @@ def merge_masks(masks):
         mask = np.logical_or(mask, m)
     return mask
 
+def add_masks(masks):
+    mask = np.zeros(masks[0].shape)
+    for m in masks:
+        mask = np.add(mask, m)
+    return mask
+
 def random_points(num_points):
     return np.array([(
         int(random.random() * 256), 
         int(random.random() * 144)
     ) for _ in range(num_points)])
 
+def logits_to_sgmd(logits):
+    return 1 / (1 + np.exp(-logits))
+
+def save_black_and_white_image(image, path):
+    # Set black and white color map
+    plt.pcolor(image, cmap='gray', vmin=0, vmax=1)
+    plt.imshow(image)
+    plt.axis('off')
+    plt.savefig(path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
 metadata = pd.read_json("metadata/abandoned_park/test.jsonl", lines=True)
 
 sam = sam_model_registry[SAM_MODEL_TYPE](checkpoint=SAM_MODEL_CHECKPOINT)
 predictor = SamPredictor(sam)
+predictor.device("cuda")
 for sample in os.listdir(MY_DATASET_PATH):
-    for cls in ["ferris_wheel", "tree", "carousel", "roller_coaster"]:
-        for model in ["dust", "fog", "maple_leaf"]:
+    for model in ["dust", "fog", "maple_leaf"]:
+        for cls in ["ferris_wheel", "tree", "carousel", "roller_coaster"]:
+            final_path = f"output/abandoned_park/{sample}/{model}/{cls}/"
+            final_image_path = f"images/abandoned_park/{sample}/{model}/{cls}"
+
+            if os.path.exists(final_path): continue
+
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
             cls_image = filter_colors(os.path.join(MY_DATASET_PATH, sample, f"{cls}.png"), WHITE_COLOR)
 
@@ -131,8 +154,26 @@ for sample in os.listdir(MY_DATASET_PATH):
             if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 0
             box = get_bounding_box(cls_image, variable)
             predictor.set_image(image)
-            masks, _, _ = predictor.predict(box=box)
+            masks, _, _ = predictor.predict(box=box, return_logits=True)
+            sgmd_masks = [logits_to_sgmd(m) for m in masks]
+            sgmd_mask = add_masks(sgmd_masks)
 
-            mask = merge_masks(masks)
-            show_black_and_white_image(cls_image)
-            show_black_and_white_image(mask)
+            binary_mask = sgmd_mask > 0.5
+
+            # show_black_and_white_image(cls_image)
+            # show_black_and_white_image(binary_mask)
+
+            os.makedirs(f"{final_path}")
+            os.makedirs(f"{final_image_path}")
+
+            np.save(f"{final_path}/sgmd.npy", sgmd_mask)
+            np.save(f"{final_path}/binary.npy", binary_mask)
+            np.save(f"{final_path}/ground.npy", cls_image)
+
+            save_black_and_white_image(sgmd_mask, f"{final_image_path}/sgmd.png")
+            save_black_and_white_image(binary_mask, f"{final_image_path}/binary.png")
+            save_black_and_white_image(cls_image, f"{final_image_path}/ground.png")
+        
+        final_binary_mask = add_masks([np.load(f"output/abandoned_park/{sample}/{model}/{cls}/binary.npy") for cls in ["ferris_wheel", "tree", "carousel", "roller_coaster"]])
+        np.save(f"output/abandoned_park/{sample}/{model}/combined_binary.npy", final_binary_mask)
+        save_black_and_white_image(final_binary_mask, f"images/abandoned_park/{sample}/{model}/combined_binary.png")
