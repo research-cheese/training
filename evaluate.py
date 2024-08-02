@@ -184,13 +184,14 @@ for sample in sorted_dir:
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
             cls_image = filter_colors(os.path.join(MY_DATASET_PATH, sample, f"{cls}.png"), WHITE_COLOR)
 
-            variable = 25
-            if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 0
+            # variable = 25
+            # if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 0
 
-            box = get_bbbox(cls_image)
-            input_points, input_labels = generate_points(cls_image, 10 + int(100 / (variable + 1)))
+            box = get_bounding_box(cls_image)
+            # input_points, input_labels = generate_points(cls_image, 10 + int(100 / (variable + 1)))
             predictor.set_image(image)
-            masks, _, _ = predictor.predict(point_coords=input_points, point_labels=input_labels, box=box, return_logits=True)
+            # masks, _, _ = predictor.predict(point_coords=input_points, point_labels=input_labels, box=box, return_logits=True)
+            masks, _, _ = predictor.predict(box=box, return_logits=True)
             sgmd_masks = [logits_to_sgmd(m) for m in masks]
             sgmd_mask = add_masks(sgmd_masks)
 
