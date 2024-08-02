@@ -157,6 +157,7 @@ for sample in sorted_dir:
             final_path = f"output/abandoned_park/{sample}/{model}/{cls}/"
             final_image_path = f"images/abandoned_park/{sample}/{model}/{cls}"
             
+            print(f"Processing {final_path}")
             if os.path.exists(final_path): continue
 
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
