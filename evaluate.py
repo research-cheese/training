@@ -147,13 +147,16 @@ metadata = pd.read_json("metadata/abandoned_park/test.jsonl", lines=True)
 sam = sam_model_registry[SAM_MODEL_TYPE](checkpoint=SAM_MODEL_CHECKPOINT)
 sam.to("cuda")
 predictor = SamPredictor(sam)
-for sample in os.listdir(MY_DATASET_PATH):
+
+sorted_dir = os.listdir(MY_DATASET_PATH)
+sorted_dir = sorted([int(x) for x in sorted_dir])
+sorted_dir = [str(x) for x in sorted_dir]
+for sample in sorted_dir:
     for model in ["dust", "fog", "maple_leaf"]:
         for cls in ["ferris_wheel", "tree", "carousel", "roller_coaster"]:
             final_path = f"output/abandoned_park/{sample}/{model}/{cls}/"
             final_image_path = f"images/abandoned_park/{sample}/{model}/{cls}"
-            print(final_path)
-
+            
             if os.path.exists(final_path): continue
 
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
