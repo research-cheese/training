@@ -190,7 +190,7 @@ for sample in sorted_dir:
 
             input_points, input_labels = generate_points(cls_image, 10 + int(100 / (variable + 1)))
             predictor.set_image(image)
-            masks, _, _ = predictor.predict(input_points=input_points, input_labels=input_labels, return_logits=True)
+            masks, _, _ = predictor.predict(point_coords=input_points, point_labels=input_labels, return_logits=True)
             sgmd_masks = [logits_to_sgmd(m) for m in masks]
             sgmd_mask = add_masks(sgmd_masks)
 
