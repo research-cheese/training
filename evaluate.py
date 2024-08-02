@@ -90,7 +90,7 @@ def get_bbbox(ground_truth_map: np.array) -> list:
   return bbox
 
 def get_bounding_box(image, variable):
-    if np.sum(image) <= 1500: return np.array([random.random(), random.random(), random.random(), random.random()])
+    if np.sum(image) <= 300: return np.array([random.random(), random.random(), random.random(), random.random()])
 
     bbbox = get_bbbox(image)
     min_x = bbbox[0]    
@@ -188,7 +188,7 @@ for sample in sorted_dir:
             cls_image = filter_colors(os.path.join(MY_DATASET_PATH, sample, f"{cls}.png"), WHITE_COLOR)
 
             variable = 50
-            if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 25
+            if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 10
 
             box = get_bounding_box(cls_image, variable)
             # input_points, input_labels = generate_points(cls_image, 10 + int(100 / (variable + 1)))
