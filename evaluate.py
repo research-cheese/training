@@ -68,6 +68,8 @@ def get_bbbox(ground_truth_map: np.array) -> list:
 
   """
   # get bounding box from mask
+  if np.sum(ground_truth_map) <= 30: return [0, 0, 0, 0]
+
   idx = np.where(ground_truth_map > 0)
   x_indices = idx[1]
   y_indices = idx[0]
