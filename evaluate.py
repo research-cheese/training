@@ -187,8 +187,8 @@ for sample in sorted_dir:
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
             cls_image = filter_colors(os.path.join(MY_DATASET_PATH, sample, f"{cls}.png"), WHITE_COLOR)
 
-            variable = 50
-            if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 10
+            variable = 100
+            if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 25
 
             box = get_bounding_box(cls_image, variable)
             # input_points, input_labels = generate_points(cls_image, 10 + int(100 / (variable + 1)))
