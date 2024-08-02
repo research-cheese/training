@@ -57,7 +57,7 @@ def get_all_points_equal_1(image):
                 points.append([i, j, image[i, j]])
     return points
 
-def get_ground_box(ground_truth_map: np.array) -> list:
+def get_bbbox(ground_truth_map: np.array) -> list:
   """
   Get the bounding box of the image with the ground truth mask
   
@@ -72,26 +72,39 @@ def get_ground_box(ground_truth_map: np.array) -> list:
   idx = np.where(ground_truth_map > 0)
   x_indices = idx[1]
   y_indices = idx[0]
-  x_min, x_max = np.min(x_indices), np.max(x_indices)
-  y_min, y_max = np.min(y_indices), np.max(y_indices)
-  # add perturbation to bounding box coordinates
-  H, W = ground_truth_map.shape
-  x_min = max(0, x_min - np.random.randint(0, 20))
-  x_max = min(W, x_max + np.random.randint(0, 20))
-  y_min = max(0, y_min - np.random.randint(0, 20))
-  y_max = min(H, y_max + np.random.randint(0, 20))
-  bbox = [x_min, y_min, x_max, y_max]
+  try:
+    x_min, x_max = np.min(x_indices), np.max(x_indices)
+    y_min, y_max = np.min(y_indices), np.max(y_indices)
+    # add perturbation to bounding box coordinates
+    H, W = ground_truth_map.shape
+    x_min = max(0, x_min)
+    x_max = min(W, x_max)
+    y_min = max(0, y_min)
+    y_max = min(H, y_max)
+    bbox = [x_min, y_min, x_max, y_max]
+
+  except:
+    bbox = [0, 0, 0, 0]
 
   return bbox
 
 def get_bounding_box(image, variable):
-    box = get_ground_box(image)
-    min_x = box[0]
-    min_y = box[1]
-    max_x = box[2]
-    max_y = box[3]
 
-    random.random() * variable
+    bbbox = get_bbbox(image)
+    min_x = bbbox[0] 
+    min_y = bbbox[1]
+    max_x = bbbox[2]
+    max_y = bbbox[3]
+
+    # for i in range(image.shape[0]):
+    #     for j in range(image.shape[1]):
+    #         if image[i, j] == 1:
+    #             min_x = min(min_x, i)
+    #             max_x = max(max_x, i)
+    #             min_y = min(min_y, j)
+    #             max_y = max(max_y, j)
+
+    # random.random() * variable
 
     min_x = min_x + variable * (random.random()-0.5)
     max_x = max_x + variable * (random.random()-0.5)
