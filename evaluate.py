@@ -10,7 +10,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 SAM_MODEL_TYPE = "vit_b"
-SAM_MODEL_CHECKPOINT = "model_checkpoint\sam_vit_b_01ec64.pth"
+SAM_MODEL_CHECKPOINT = "model_checkpoint/sam_vit_b_01ec64.pth"
 
 MY_DATASET_PATH = "data/abandoned_park/test"
 
