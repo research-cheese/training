@@ -145,7 +145,7 @@ def save_imageage(image, path):
 metadata = pd.read_json("metadata/abandoned_park/test.jsonl", lines=True)
 
 sam = sam_model_registry[SAM_MODEL_TYPE](checkpoint=SAM_MODEL_CHECKPOINT)
-sam = sam.to("cuda")
+# sam = sam.to("cuda")
 predictor = SamPredictor(sam)
 
 sorted_dir = os.listdir(MY_DATASET_PATH)
