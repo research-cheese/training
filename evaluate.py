@@ -152,6 +152,7 @@ for sample in os.listdir(MY_DATASET_PATH):
         for cls in ["ferris_wheel", "tree", "carousel", "roller_coaster"]:
             final_path = f"output/abandoned_park/{sample}/{model}/{cls}/"
             final_image_path = f"images/abandoned_park/{sample}/{model}/{cls}"
+            print(final_path)
 
             if os.path.exists(final_path): continue
 
