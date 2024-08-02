@@ -90,7 +90,7 @@ def get_bbbox(ground_truth_map: np.array) -> list:
   return bbox
 
 def get_bounding_box(image, variable):
-    if np.sum(image) <= 1500: return [random.random(), random.random(), random.random(), random.random()]
+    if np.sum(image) <= 1500: return np.array([random.random(), random.random(), random.random(), random.random()])
 
     bbbox = get_bbbox(image)
     min_x = bbbox[0]    
