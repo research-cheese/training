@@ -96,16 +96,6 @@ def get_bounding_box(image, variable):
     max_x = bbbox[2]
     max_y = bbbox[3]
 
-    # for i in range(image.shape[0]):
-    #     for j in range(image.shape[1]):
-    #         if image[i, j] == 1:
-    #             min_x = min(min_x, i)
-    #             max_x = max(max_x, i)
-    #             min_y = min(min_y, j)
-    #             max_y = max(max_y, j)
-
-    # random.random() * variable
-
     min_x = min_x + variable * (random.random()-0.5)
     max_x = max_x + variable * (random.random()-0.5)
     min_y = min_y + variable * (random.random()-0.5)
@@ -177,7 +167,7 @@ def save_imageage(image, path):
 metadata = pd.read_json("metadata/abandoned_park/test.jsonl", lines=True)
 
 sam = sam_model_registry[SAM_MODEL_TYPE](checkpoint=SAM_MODEL_CHECKPOINT)
-sam = sam.to("cuda")
+# sam = sam.to("cuda")
 predictor = SamPredictor(sam)
 
 sorted_dir = os.listdir(MY_DATASET_PATH)
@@ -195,11 +185,12 @@ for sample in sorted_dir:
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
             cls_image = filter_colors(os.path.join(MY_DATASET_PATH, sample, f"{cls}.png"), WHITE_COLOR)
 
-            variable = 100
+            variable = 25
             if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 0
-            box = get_bounding_box(cls_image, variable)
+
+            input_points, input_labels = generate_points(cls_image, 10 + int(100 / (variable + 1)))
             predictor.set_image(image)
-            masks, _, _ = predictor.predict(box=box, return_logits=True)
+            masks, _, _ = predictor.predict(input_points=input_points, input_labels=input_labels, return_logits=True)
             sgmd_masks = [logits_to_sgmd(m) for m in masks]
             sgmd_mask = add_masks(sgmd_masks)
 
