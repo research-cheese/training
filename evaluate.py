@@ -53,8 +53,7 @@ def get_all_points_equal_1(image):
     points = []
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
-            if image[i, j] == 1:
-                points.append([i, j, image[i, j]])
+            points.append([i, j, image[i, j]])
     return points
 
 def get_bbbox(ground_truth_map: np.array) -> list:
