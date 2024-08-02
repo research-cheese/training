@@ -187,7 +187,7 @@ for sample in sorted_dir:
             image = imread(os.path.join(MY_DATASET_PATH, sample, "Scene.png"))
             cls_image = filter_colors(os.path.join(MY_DATASET_PATH, sample, f"{cls}.png"), WHITE_COLOR)
 
-            variable = 25
+            variable = 35
             if (float(metadata[metadata["sample"] == int(sample)][model]) > 0.01): variable = 10
 
             box = get_bounding_box(cls_image, variable)
