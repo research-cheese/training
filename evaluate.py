@@ -90,9 +90,10 @@ def get_bbbox(ground_truth_map: np.array) -> list:
   return bbox
 
 def get_bounding_box(image, variable):
+    if np.sum(image) <= image.shape[0] * image.shape[1] * 0.05: return [random.random(), random.random(), random.random(), random.random()]
 
     bbbox = get_bbbox(image)
-    min_x = bbbox[0] 
+    min_x = bbbox[0]    
     min_y = bbbox[1]
     max_x = bbbox[2]
     max_y = bbbox[3]
