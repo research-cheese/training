@@ -134,6 +134,14 @@ def save_black_and_white_image(image, path):
     plt.savefig(path, bbox_inches='tight', pad_inches=0)
     plt.close()
 
+def save_imageage(image, path):
+    # Set black and white color map
+    plt.pcolor(image, cmap='gray', vmin=0, vmax=4)
+    plt.imshow(image)
+    plt.axis('off')
+    plt.savefig(path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
 metadata = pd.read_json("metadata/abandoned_park/test.jsonl", lines=True)
 
 sam = sam_model_registry[SAM_MODEL_TYPE](checkpoint=SAM_MODEL_CHECKPOINT)
@@ -176,4 +184,4 @@ for sample in os.listdir(MY_DATASET_PATH):
         
         final_binary_mask = add_masks([np.load(f"output/abandoned_park/{sample}/{model}/{cls}/binary.npy") for cls in ["ferris_wheel", "tree", "carousel", "roller_coaster"]])
         np.save(f"output/abandoned_park/{sample}/{model}/combined_binary.npy", final_binary_mask)
-        save_black_and_white_image(final_binary_mask, f"images/abandoned_park/{sample}/{model}/combined_binary.png")
+        save_imageage(final_binary_mask, f"images/abandoned_park/{sample}/{model}/combined_binary.png")
